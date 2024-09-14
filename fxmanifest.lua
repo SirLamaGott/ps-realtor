@@ -1,18 +1,15 @@
 fx_version 'cerulean'
+games {'gta5'}
+lua54 'yes'
 use_experimental_fxv2_oal 'yes'
 
-game "gta5"
-
-author "Xirvin & Project Sloth"
-version '2.0.0'
-
-lua54 'yes'
-
-
+author 'Xirvin & Project Sloth'
+description 'Housing Relator Job'
+version '4.0.0'
 ui_page 'html/index.html'
--- ui_page 'http://localhost:3000/' --for dev
 
 shared_script {
+  '@es_extended/imports.lua',
   '@ox_lib/init.lua',
   "shared/**",
 }
@@ -24,8 +21,6 @@ server_script {
 client_script {
   'client/**',
 }
-
-
 
 files {
   'html/**',

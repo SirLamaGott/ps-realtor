@@ -142,7 +142,7 @@ local createProperty = {
             propertyType = self.propertyType
         }
 
-        TriggerServerEvent('bl-realtor:server:registerProperty', data)
+        TriggerServerEvent('rlo_realtor:server:registerProperty', data)
 
         lib.notify({ description = 'Property was created!', type = 'success'})
         self:cancelCreating()

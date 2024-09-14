@@ -1,15 +1,15 @@
-local PSHousing = exports['ps-housing']
+local RLOHousing = exports['rlo_housing']
 
 local function initialiseData()
 	-- Get properties
-	local properties = PSHousing:GetProperties()
+	local properties = RLOHousing:GetProperties()
 
 	PropertiesTable = {}
 	for _, property in pairs(properties) do
 		PropertiesTable[#PropertiesTable+1] = property.propertyData
 	end
 
-	local apartments = PSHousing:GetApartments()
+	local apartments = RLOHousing:GetApartments()
 
 	local ApartmentsTable = {}
 
@@ -23,7 +23,7 @@ local function initialiseData()
 
 	SendNUIMessage({
 		action = "setShells",
-		data = exports['ps-housing']:GetShells()
+		data = exports['rlo_housing']:GetShells()
 	})
 
 	SendNUIMessage({
@@ -38,14 +38,14 @@ local function initialiseData()
 end
 
 CreateThread(function()
-	if GetResourceState('ps-housing') ~= 'started' then return end
+	if GetResourceState('rlo_housing') ~= 'started' then return end
 	initialiseData()
 end)
 
-AddEventHandler('ps-housing:client:initialisedProperties', initialiseData)
+AddEventHandler('rlo_housing:client:initialisedProperties', initialiseData)
 
-AddEventHandler('ps-housing:client:updatedProperty', function(property_id)
-	local property = exports['ps-housing']:GetProperty(property_id)
+AddEventHandler('rlo_housing:client:updatedProperty', function(property_id)
+	local property = exports['rlo_housing']:GetProperty(property_id)
 
 	for i = 1, #PropertiesTable do
 		if PropertiesTable[i].property_id == property_id then
@@ -62,16 +62,16 @@ end)
 
 --old is the old player apartment location, new is the new location
 -- both have to be updated
-AddEventHandler("ps-housing:client:updateApartment", function(old, new)
+AddEventHandler("rlo_housing:client:updateApartment", function(old, new)
 
-	local oldApt = PSHousing:GetApartment(old)
+	local oldApt = RLOHousing:GetApartment(old)
 
 	SendNUIMessage({
 		action = "updateApartment",
 		data = oldApt
 	})
 
-	local newApt = PSHousing:GetApartment(new)
+	local newApt = RLOHousing:GetApartment(new)
 
 	SendNUIMessage({
 		action = "updateApartment",
@@ -79,7 +79,7 @@ AddEventHandler("ps-housing:client:updateApartment", function(old, new)
 	})
 end)
 
-RegisterNetEvent('ps-housing:client:addProperty', function(propertyData)
+RegisterNetEvent('rlo_housing:client:addProperty', function(propertyData)
 	PropertiesTable[#PropertiesTable+1] = propertyData
 
 	SendNUIMessage({

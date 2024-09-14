@@ -6,7 +6,7 @@
 	import RealtorMenu from '@components/RealtorMenu.svelte'
 	import { SendNUI } from '@utils/SendNUI'
 
-	$resName = 'ps-realtor' // Change this to your resource name (case sensitive)
+	$resName = 'rlo_realtor' // Change this to your resource name (case sensitive)
 
 	SendNUI('uiLoaded')
 </script>

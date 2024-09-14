@@ -1,4 +1,3 @@
-QBCore = exports['qb-core']:GetCoreObject()
 PropertiesTable = {}
 UiLoaded = false
 
@@ -50,11 +49,6 @@ local function doAnimation()
     end)
 end
 
-RegisterNetEvent('QBCore:Server:UpdateObject', function()
-	if source ~= '' then return false end
-	QBCore = exports['qb-core']:GetCoreObject()
-end)
-
 local function toggleUI(bool)
 	if bool and not UiLoaded then
 		lib.notify({ description = 'UI not loaded!' , type = 'error'})
@@ -88,7 +82,7 @@ local function setRealtor(jobInfo)
 	if RealtorJobs[jobInfo.name] then
 		SendNUIMessage({
 			action = "setRealtorGrade",
-			data = jobInfo.grade.level
+			data = jobInfo.grade
 		})
 	else 
 		SendNUIMessage({
@@ -97,15 +91,14 @@ local function setRealtor(jobInfo)
 		})
 	end
 end
-RegisterNetEvent("QBCore:Client:OnJobUpdate", setRealtor)
+RegisterNetEvent('esx:setJob', setRealtor)
 
-AddEventHandler('QBCore:Client:OnPlayerLoaded', function()
+AddEventHandler('esx:playerLoaded',function(xPlayer, isNew, skin)
 	SendNUIMessage({
 		action = "setConfig",
 		data = Config.RealtorPerms
 	})
-    local PlayerData = QBCore.Functions.GetPlayerData()
-	setRealtor(PlayerData.job)
+	setRealtor(xPlayer.getJob())
 end)
 
 --this was mainly used for dev
@@ -117,23 +110,21 @@ AddEventHandler("onResourceStart", function(resName)
 			data = Config.RealtorPerms
 		})
 
-		local PlayerData = QBCore.Functions.GetPlayerData()
+		local PlayerData = ESX.PlayerData
 		setRealtor(PlayerData.job)
 	end
 end)
 
 if Config.UseCommand then
-	RegisterCommand("housing", function()
-		local PlayerData = QBCore.Functions.GetPlayerData()
-		if not PlayerData.metadata["isdead"] and not PlayerData.metadata["inlaststand"] and not PlayerData.metadata["ishandcuffed"] and not IsPauseMenuActive() then
+	RegisterCommand("rlohousing", function()
+		if not IsPauseMenuActive() then
 			toggleUI(not UIOpen)
 		end
 	end, false)
 end
 
-RegisterNetEvent('bl-realtor:client:toggleUI', function()
-	local PlayerData = QBCore.Functions.GetPlayerData()
-    if not PlayerData.metadata["isdead"] and not PlayerData.metadata["inlaststand"] and not PlayerData.metadata["ishandcuffed"] and not IsPauseMenuActive() then
+RegisterNetEvent('rlo_realtor:client:toggleUI', function()
+    if not IsPauseMenuActive() then
 		toggleUI(not UIOpen)
 	end
 end)
@@ -151,7 +142,7 @@ RegisterNUICallback("updatePropertyData", function(data, cb)
 	local changeType = data.type
 
 	if changeType == 'UpdateShell' then
-		local currentShells = exports['ps-housing']:GetShells()
+		local currentShells = exports['rlo_housing']:GetShells()
 		local shellName = currentShells[newData.shell].hash
 
 		if not IsModelInCdimage(shellName) then
@@ -160,23 +151,23 @@ RegisterNUICallback("updatePropertyData", function(data, cb)
 		end
 	end
 
-	TriggerServerEvent("bl-realtor:server:updateProperty", changeType, property_id, newData)
+	TriggerServerEvent("rlo_realtor:server:updateProperty", changeType, property_id, newData)
 	cb("ok")
 end)
 
 RegisterNUICallback("addTenantToApartment", function(data, cb)
-	TriggerServerEvent("bl-realtor:server:addTenantToApartment", data)
+	TriggerServerEvent("rlo_realtor:server:addTenantToApartment", data)
 	cb("ok")
 end)
 
 RegisterNUICallback("getNames", function(data, cb)
 	if not data then return end
-	local names = lib.callback.await("bl-realtor:server:getNames",source, data)
+	local names = lib.callback.await("rlo_realtor:server:getNames",source, data)
 	cb(names)
 end)
 
 RegisterNUICallback("startZonePlacement", function (data, cb)
-	 cb(1)
+	cb(1)
 	SetNuiFocus(false, false)
 
 	local type = data.type
@@ -219,17 +210,16 @@ RegisterNUICallback("startZonePlacement", function (data, cb)
             street = street,
             region = region,
         }
-        TriggerServerEvent("bl-realtor:server:updateProperty", type, property_id, data)
+        TriggerServerEvent("rlo_realtor:server:updateProperty", type, property_id, data)
 	else
         data = {
             door = newData,
             street = street,
             region = region,
         }
-        TriggerServerEvent("bl-realtor:server:updateProperty", type, property_id, data)
+        TriggerServerEvent("rlo_realtor:server:updateProperty", type, property_id, data)
 	end
 end)
-
 
 function SetHide(bool)
 	SendNUIMessage({
